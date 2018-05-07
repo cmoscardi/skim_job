@@ -1,9 +1,11 @@
-FROM python:3
-WORKDIR /usr/src/app
+FROM continuumio/miniconda
 
-ADD . / /usr/src/app/
+RUN mkdir /app
+WORKDIR /app
 
-RUN pip install --no-cache-dir networkx
-RUN pip install --no-cache-dir dask
+ADD . / /app/
+
+RUN conda install -y networkx
+RUN conda install -y dask
 
 RUN ./script.sh
