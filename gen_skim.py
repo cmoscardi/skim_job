@@ -1,31 +1,28 @@
-import itertools
 import joblib
 
 import networkx as nx
 assert nx.__version__ == "2.1"
 
 
-def process_g(nodes):
-    l = [nx.algorithms.shortest_path_length(road_graph,
-                                           ix1, ix2) for ix1, ix2 in nodes]
+def process_g(ix1, ix2):
+    l = nx.algorithms.shortest_path_length(road_graph, 
+                                           ix1,
+                                           ix2)
     return l
-
-def batch(iterable, n=1):
-    l = len(iterable)
-    for ndx in range(0, l, n):
-        yield iterable[ndx:min(ndx + n, l)]
 
 def gen_skim_graph(write_path=None, n_jobs=12):
     print("==={} rows to process===".format(len(road_graph) * len(road_graph)))
-    nodes = batch(list(itertools.permutations(list(road_graph.nodes), 2)), n=3000)
-    g = (joblib.delayed(process_g)(n)\
-         for n in nodes)
+    nodes = list(road_graph.nodes)
+    g = (joblib.delayed(process_g)(ix1, ix2)\
+         for ix1 in nodes\
+         for ix2 in nodes)
 
     p = joblib.Parallel(n_jobs=n_jobs, verbose=1)(g)
 
     skim_graph = nx.DiGraph()
     counter = 0
-    for (ix1, ix2), p in zip(nodes, itertools.chain(*p)):
+    for ix1 in nodes:
+        for ix2 in nodes:
             skim_graph.add_edge(ix1, ix2, weight=p[counter])
             counter += 1
 
