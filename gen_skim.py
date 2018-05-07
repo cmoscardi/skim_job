@@ -17,7 +17,7 @@ def process_g(arg):
 def gen_skim_graph(write_path=None, n_jobs=12):
     print("==={} rows to process===".format(len(road_graph) * len(road_graph)))
     nodes = list(road_graph.nodes)
-    nodedb = db.from_sequence(itertools.permutations(nodes, 2), npartitions=12)
+    nodedb = db.from_sequence(itertools.permutations(nodes, 2), npartitions=56)
     results = nodedb.map(process_g)
     with ProgressBar():
         final = results.compute()
