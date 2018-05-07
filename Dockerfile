@@ -3,7 +3,7 @@ WORKDIR /usr/src/app
 
 ADD . / /usr/src/app/
 
-pip install --no-cache-dir networkx
-pip install --no-cache-dir dask
+RUN pip install --no-cache-dir networkx
+RUN pip install --no-cache-dir dask
 
 RUN ./script.sh
