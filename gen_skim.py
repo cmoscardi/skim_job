@@ -2,6 +2,7 @@ import itertools
 
 import dask.bag as db
 from dask.diagnostics import ProgressBar
+from dask.multiprocessing import get
 
 import networkx as nx
 assert nx.__version__ == "2.1"
@@ -20,7 +21,7 @@ def gen_skim_graph(write_path=None, n_jobs=12):
     nodedb = db.from_sequence(itertools.permutations(nodes, 2), npartitions=56)
     results = nodedb.map(process_g)
     with ProgressBar():
-        final = results.compute()
+        final = results.compute(get=get)
 
 
     skim_graph = nx.DiGraph()
